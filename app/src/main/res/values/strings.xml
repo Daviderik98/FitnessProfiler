@@ -1,0 +1,45 @@
+<resources>
+    <string name="app_name">My Application</string>
+
+    <string name="menu_title_one">Hello And Welcome To</string>
+    <string name="menu_title_two">Your Fitness Profiler</string>
+    <string name="menu_subtitle">Your guide to understanding \n your current physical fitness</string>
+    <string name="menu_label_one">Full Name</string>
+    <string name="menu_label_two">Password</string>
+    <string name="login">Login</string>
+    <string name="to_registration">Don´t have a profile? Click here to register</string>
+
+    <string name="register_user">Register</string>
+
+    <string name="insert_opening">Input Screen</string>
+    <string name="insert_welcome">Welcome to the Input Screen</string>
+    <string name="insert_description">In this screen you can insert \nyour own statistics
+        into each filed in the scrollable list below in order to
+        \ncalculate your profile on the next page</string>
+    <string name="insert_extra">*Note: All input fields need to be filled in
+        \nbefore you can go to the next screen</string>
+    <string name="insert_navigate">Navigate Right</string>
+
+
+    <string name="insert_input_one">Height</string>
+    <string name="insert_input_two">Weight</string>
+    <string name="insert_input_three">Age</string>
+    <string name="insert_input_four">Resting Pulse</string>
+
+    <string name="insert_label_one"> m</string>
+    <string name="insert_label_two"> kg</string>
+    <string name="insert_label_three">years</string>
+    <string name="insert_label_four">bpm</string>
+
+    <string name="present_opening">Presentation Screen</string>
+    <string name="present_welcome">Welcome to the Presentation Screen
+        \n Here you can see the results of your fitness profile
+        \nbased on the data you entered</string>
+    <string name="present_allinputs">Entered Data : </string>
+    <string name="present_navigate">Navigate Left</string>
+
+    <string name="calculate_first">Your BMI(Body Mass Index) : </string>
+    <string name="calculate_second"> Your MaxPulse : </string>
+    <string name="calculate_third">Your HRR(Heart Rate Reserve) : </string>
+    <string name="start_calculation">Start Calculation</string>
+</resources>
