@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface ProfileDao {
 
+    //Standard Queries
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertProfile(profile: Profile)
 
@@ -24,6 +25,8 @@ interface ProfileDao {
     @Delete
     fun deleteProfile(profile: Profile): Int
 
+
+    //Queries for login-Logic
     @Query("SELECT * FROM profiles WHERE password = :passWord AND name = :name")
     fun getByPasswordAndName(passWord: String, name: String): Flow<List<Profile>>
 
@@ -32,4 +35,16 @@ interface ProfileDao {
 
     @Query("SELECT * FROM profiles")
     fun getAllProfiles(): Flow<List<Profile>>
+
+
+
+    //Queries for updating Profile´s values
+    @Query("UPDATE profiles SET profileBMI =:enterBmi WHERE password=:pass")
+    suspend fun updateBMI(pass: String, enterBmi: Int)
+
+    @Query("UPDATE profiles SET profileMaxPulse=:enterMaxPulse WHERE password=:pass")
+    suspend fun updateMaxPulse(pass: String, enterMaxPulse: Int)
+
+    @Query("UPDATE profiles SET profileHRR=:enterHRR WHERE password=:pass")
+    suspend fun updateHRR(pass: String, enterHRR:Int)
 }

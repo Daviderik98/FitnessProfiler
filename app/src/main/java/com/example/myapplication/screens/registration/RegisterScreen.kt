@@ -16,6 +16,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -101,17 +102,19 @@ fun registerScreen(
                     mainViewModel.onEvent(MainEvent.Submit)
                     if (mainViewModel.signUpState.isValid) {
 
-                        dbViewModel.registerProfile(
-                            thisName = mainViewModel.signUpState.fullName,
-                            thisPassword = mainViewModel.signUpState.passWord
-                        )
-                        println(dbViewModel.profileState.name)
-                        println(mainViewModel.signUpState.fullName)
-                        println(dbViewModel.profileState.password)
-                        println(mainViewModel.signUpState.passWord)
-                        println(dbViewModel.profileState.loggedIn)
+                            dbViewModel.registerProfile(
+                                thisName = mainViewModel.signUpState.fullName,
+                                thisPassword = mainViewModel.signUpState.passWord
+                            )
+                            println(dbViewModel.profileState.name)
+                            println(mainViewModel.signUpState.fullName)
+                            println(dbViewModel.profileState.password)
+                            println(mainViewModel.signUpState.passWord)
+                            println(dbViewModel.profileState.loggedIn)
 
-                        navController.navigate(route = ScreenRoute.InsertData.route)
+                            navController.navigate(route = ScreenRoute.InsertData.route)
+
+
                     } else {
                         println("YOU DO NOT HAVE VALID DETAILS YET!") //TODO - Create other indicator of error
                     }
@@ -120,7 +123,15 @@ fun registerScreen(
             ) {
                 Text(text = stringResource(id = R.string.register_user))
             }
+            Text(
+                text = dbViewModel.profileState.errorMessage
+            )
 
+            Text(
+                text ="Delete Profile with entered\n name and password",
+                color = Color.Red,
+                modifier = Modifier.clickable{}
+            )
             Spacer(modifier = Modifier.padding(vertical = 40.dp))
 
             Text(

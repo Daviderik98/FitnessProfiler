@@ -14,29 +14,21 @@ class ProfileRepository( private val profileDao: ProfileDao ) {
         //Just for testing
         println("ACCOUNT ADDED : ${profileOne.name } , ${profileOne.password}")
     }
-    //On swipe to delete(if I have time to implement it)
-    fun deleteProfile(profileOne: Profile){
-        profileDao.deleteProfile(profileOne)
-    }
-    //Send in new data
-    fun updateProfile(profileOne: Profile){
-        profileDao.updateProfile(profileOne)
-    }
 
-    //For db checking
-    suspend fun countAllProfiles(): Int {
-        val profilesList = profileDao.getAllProfiles()
-        return profilesList.count()
-    }
+     fun deleteProfile(thisProfile: Profile){
+         profileDao.deleteProfile(thisProfile)
+     }
+
     //For logging in
     suspend fun scanForPassword(passCode: String): Boolean{
         val list = profileDao.isPasswordAvailable(passCode)
-        return list.count() <= 1
+        if(list.count() >= 1){
+            return true
+        }
+        else{
+            return false
+        }
     }
-
-
-
-
 
 
     suspend fun getByPasswordAndName(passcode: String, fullname: String): Profile{
@@ -44,6 +36,20 @@ class ProfileRepository( private val profileDao: ProfileDao ) {
         return firstProfile[0]
     }
 
+
+
+    //For updating Profile values
+    suspend fun updateBMI(passcode: String, bmi: Int){
+        profileDao.updateBMI(passcode, bmi)
+    }
+
+    suspend fun updateMaxPulse(passcode: String, maxPulse: Int){
+        profileDao.updateMaxPulse(passcode, maxPulse)
+    }
+
+    suspend fun updateHRR(passcode: String, hrr: Int){
+        profileDao.updateHRR(passcode, hrr)
+    }
 
 
 

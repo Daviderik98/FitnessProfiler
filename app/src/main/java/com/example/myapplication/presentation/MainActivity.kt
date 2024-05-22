@@ -132,10 +132,12 @@ fun mainMenu(
             Button(onClick = {
                 mainViewModel.onEvent(MainEvent.Submit)
                 if (mainViewModel.signUpState.isValid) {
-                    dbViewModel.logInByPassword(
-                        password = mainViewModel.signUpState.passWord,
-                        fullName = mainViewModel.signUpState.fullName)
-                    navController.navigate(route = ScreenRoute.InsertData.route)
+
+                    if(dbViewModel.logInByPassword(
+                            password = mainViewModel.signUpState.passWord,
+                            fullName = mainViewModel.signUpState.fullName)) {
+                        navController.navigate(route = ScreenRoute.InsertData.route)
+                    }
 
                 } else {
                     println("YOU DO NOT HAVE VALID DETAILS YET!") //TODO - Create other indicator of error
@@ -144,6 +146,9 @@ fun mainMenu(
             ) {
                 Text(text = stringResource(id = R.string.login))
             }
+            Text(
+                text = dbViewModel.profileState.errorMessage
+            )
 
             Spacer(modifier = Modifier.padding(vertical = 40.dp))
 

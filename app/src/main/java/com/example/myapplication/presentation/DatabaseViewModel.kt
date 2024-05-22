@@ -43,46 +43,64 @@ class DatabaseViewModel : ViewModel() {
         )
     }
 
-    fun loggingIn(thisProfile: Profile) {
-        profileState = profileState.copy(
-            name = thisProfile.name,
-            password = thisProfile.password,
-            bmi = thisProfile.profileBMI,
-            maxP = thisProfile.profileMaxPulse,
-            hrr = thisProfile.profileHRR,
-            loggedIn = true
-        )
+    fun checkBeforeRegister(password: String): Boolean{
+        var validPassword: Boolean = false
+        var onlyOnePassword: Boolean = false
+        viewModelScope.launch{
+            if(profileRepository.scanForPassword(password)){
+                onlyOnePassword = true
+
+            }
+            else{
+
+            }
+        }
+       if(!onlyOnePassword){
+           profileState = profileState.copy(
+               errorMessage = "You have to find another password"
+           )
+       }
+        return onlyOnePassword
     }
 
-    fun logInByPassword(password: String, fullName: String) { //This function is called when the user hits Login. It checks if the password is available in one and only one account, and then returns the right profile, then accesses that profiles values
 
+    fun logInByPassword(password: String, fullName: String) : Boolean  { //This function is called when the user hits Login. It checks if the password is available in one and only one account, and then returns the right profile, then accesses that profiles values
+        var loginValid: Boolean = false
+     //   var loginMessage: String = ""
         var onlyBMI: Int = 0
         var onlyMax: Int = 0
         var onlyHRR: Int = 0
-        viewModelScope.launch { if (checkValidPass(passcode = password)) {
-            //If there´s only one profile with this password then log in that profile
-           val onlyProfile = profileRepository.getByPasswordAndName(password, fullName)
+        viewModelScope.launch {
+            if (checkValidPass(passcode = password)) {
+                //If there´s only one profile with this password then log in that profile
+                val onlyProfile = profileRepository.getByPasswordAndName(password, fullName)
 
-            onlyBMI = onlyProfile.profileBMI
-            onlyMax = onlyProfile.profileMaxPulse
-            onlyHRR = onlyProfile.profileHRR
+                onlyBMI = onlyProfile.profileBMI
+                onlyMax = onlyProfile.profileMaxPulse
+                onlyHRR = onlyProfile.profileHRR
 
-            profileState = profileState.copy(
-                bmi = onlyBMI,
-                maxP = onlyMax,
-                hrr = onlyHRR
+                profileState = profileState.copy(
+                    bmi = onlyBMI,
+                    maxP = onlyMax,
+                    hrr = onlyHRR
 
-            )
+                )
+
             }
+          /*  else {
+                loginMessage = "You have to find another password"
+            }*/
         }
         profileState = profileState.copy(
             name = fullName,
             password = password,
-            loggedIn = true
+            loggedIn = true,
+           // errorMessage = loginMessage
         )
-        }
+        return loginValid
+    }
 
-    fun checkValidPass(passcode: String): Boolean {
+    private fun checkValidPass(passcode: String): Boolean {
         var result: Boolean = false
         viewModelScope.launch {
             if (
@@ -95,12 +113,10 @@ class DatabaseViewModel : ViewModel() {
     }
 
 
-
-
     fun loggingOut() {
         profileState = profileState.copy(
             name = null,
-            password = null,
+            password = "",
             loggedIn = false,
             loginColor = Color.DarkGray
         )
@@ -108,22 +124,50 @@ class DatabaseViewModel : ViewModel() {
 
 
 
+//Functions for updating Profile´s values
+    fun updateBmi(enterBmi: Int){
+        viewModelScope.launch{
+            profileRepository.updateBMI(
+                bmi = enterBmi,
+                passcode = profileState.password
+            )
+        }
+    }
+
+    fun updateMaxPulse(enterMaxPulse: Int){
+        viewModelScope.launch {
+            profileRepository.updateMaxPulse(
+                maxPulse = enterMaxPulse,
+                passcode = profileState.password
+            )
+        }
+    }
+
+    fun updateHRR(enterHrr: Int){
+        viewModelScope.launch{
+            profileRepository.updateHRR(
+                hrr = enterHrr,
+                passcode = profileState.password
+            )
+        }
+    }
 
 
     var profileState by mutableStateOf(ProfileState())
 
     data class ProfileState(
         var name: String? = null,
-        var password: String? = null,
+        var password: String = "",
         var bmi: Int = 0,
         var maxP: Int = 0,
         var hrr: Int = 0,
         var loggedIn: Boolean = false,
         var loginColor: Color = Color.DarkGray,
-        val profilesCount: String = "xx"
+        //extra for correction
+        var errorMessage: String = ""
     )
 
-    }
+}
 
 
 

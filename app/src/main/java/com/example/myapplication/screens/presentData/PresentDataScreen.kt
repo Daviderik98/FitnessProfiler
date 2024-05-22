@@ -111,6 +111,7 @@ fun presentDataScreen(
                     calculator.bmi.toString()
                 )
             )
+            dbViewModel.updateBmi(calculator.bmi)
         },
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
@@ -148,6 +149,7 @@ fun presentDataScreen(
                     enteredData = calculator.maxPulse.toString()
                 )
             )
+            dbViewModel.updateMaxPulse(calculator.maxPulse)
         },
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
@@ -184,6 +186,7 @@ fun presentDataScreen(
                     enteredData = calculator.hrr.toString()
                 )
             )
+            dbViewModel.updateHRR(calculator.hrr)
         },
             modifier = Modifier.align(Alignment.CenterHorizontally)
             ){

@@ -54,7 +54,7 @@ fun topBarComponent(
             color = Color.LightGray,
             textDecoration = TextDecoration.Underline,
             modifier = Modifier
-                .padding(vertical = 10.dp, horizontal = 25.dp)
+                .padding(vertical = 10.dp, horizontal = 12.dp)
                 .clickable {
                     println(dbViewModel.profileState.password)
                     println(dbViewModel.profileState.loggedIn)
