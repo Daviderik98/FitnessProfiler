@@ -30,12 +30,11 @@ interface ProfileDao {
     @Query("SELECT * FROM profiles WHERE password = :passWord AND name = :name")
     fun getByPasswordAndName(passWord: String, name: String): Flow<List<Profile>>
 
-    @Query("SELECT * FROM profiles WHERE password = :passWord")
-    fun isPasswordAvailable(passWord: String): Flow<List<Profile>>
+    @Query("SELECT * from profiles WHERE password = :passWord")
+    fun doesPasswordExist(passWord: String): Flow<List<Profile>>
 
-    @Query("SELECT * FROM profiles")
+    @Query("SELECT * from profiles")
     fun getAllProfiles(): Flow<List<Profile>>
-
 
 
     //Queries for updating Profile´s values

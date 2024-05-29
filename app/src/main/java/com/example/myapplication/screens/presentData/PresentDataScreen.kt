@@ -61,7 +61,7 @@ fun presentDataScreen(
             dbViewModel = dbViewModel
         )
         Text(
-            text = stringResource(id = R.string.present_welcome),
+            text = stringResource(R.string.present_description),
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.primary
         )

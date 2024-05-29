@@ -85,6 +85,9 @@ fun registerScreen(
                 label = { Text(stringResource(id = R.string.menu_label_one)) },
                 singleLine = true,
             )
+            Text(
+                text = mainViewModel.signUpState.fullNameError.toString()
+            )
 
             Spacer(modifier = Modifier.padding(vertical = 12.dp))
 
@@ -94,6 +97,9 @@ fun registerScreen(
                 label = { Text(stringResource(id = R.string.menu_label_two)) },
                 singleLine = true,
             )
+            Text(
+                text = mainViewModel.signUpState.passWordError.toString()
+            )
 
             Spacer(modifier = Modifier.padding(vertical = 48.dp))
 
@@ -101,16 +107,13 @@ fun registerScreen(
                 onClick = {
                     mainViewModel.onEvent(MainEvent.Submit)
                     if (mainViewModel.signUpState.isValid) {
+                      //  dbViewModel.checkBeforeRegister(mainViewModel.signUpState.passWord) - Used to check for pre-existing accoutns with that password. But it Doesn´t work
 
                             dbViewModel.registerProfile(
                                 thisName = mainViewModel.signUpState.fullName,
                                 thisPassword = mainViewModel.signUpState.passWord
                             )
-                            println(dbViewModel.profileState.name)
-                            println(mainViewModel.signUpState.fullName)
-                            println(dbViewModel.profileState.password)
-                            println(mainViewModel.signUpState.passWord)
-                            println(dbViewModel.profileState.loggedIn)
+
 
                             navController.navigate(route = ScreenRoute.InsertData.route)
 
@@ -127,18 +130,13 @@ fun registerScreen(
                 text = dbViewModel.profileState.errorMessage
             )
 
-            Text(
-                text ="Delete Profile with entered\n name and password",
-                color = Color.Red,
-                modifier = Modifier.clickable{}
-            )
             Spacer(modifier = Modifier.padding(vertical = 40.dp))
 
             Text(
                 text = "Already have an account? Click here to log in",
                 modifier = Modifier.clickable {
-
                     navController.navigate(route = ScreenRoute.MainMenu.route)
+                    mainViewModel.betweenMainScreens()
                 }
             )
         }

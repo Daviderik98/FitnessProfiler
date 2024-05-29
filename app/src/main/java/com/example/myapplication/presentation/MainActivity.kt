@@ -16,6 +16,9 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
@@ -34,6 +37,9 @@ import com.example.myapplication.domain.repository.ProfileRepository
 import com.example.myapplication.navigation.ScreenRoute
 import com.example.myapplication.navigation.setUpNavigation
 import com.example.myapplication.ui.theme.MyApplicationTheme
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
 
@@ -86,19 +92,12 @@ fun mainMenu(
                 )
         ) {
             Text(
-                text = stringResource(id = R.string.menu_title_one),
-                textAlign = TextAlign.Center,
-                fontSize = 22.sp,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary
-            )
-            Text(
                 text = stringResource(id = R.string.menu_title_two),
                 textAlign = TextAlign.Center,
-                fontSize = 24.sp,
+                fontSize = 38.sp,
                 textDecoration = TextDecoration.Underline,
                 fontWeight = FontWeight.ExtraBold,
-                color = MaterialTheme.colorScheme.primary
+                color = MaterialTheme.colorScheme.onPrimaryContainer
             )
             Spacer(modifier = Modifier.padding(13.dp))
             Text(
@@ -129,16 +128,16 @@ fun mainMenu(
             )
             Spacer(modifier = Modifier.padding(vertical = 48.dp))
 
+
+
             Button(onClick = {
                 mainViewModel.onEvent(MainEvent.Submit)
                 if (mainViewModel.signUpState.isValid) {
-
-                    if(dbViewModel.logInByPassword(
-                            password = mainViewModel.signUpState.passWord,
-                            fullName = mainViewModel.signUpState.fullName)) {
-                        navController.navigate(route = ScreenRoute.InsertData.route)
-                    }
-
+                            dbViewModel.logInByPassword(
+                                password = mainViewModel.signUpState.passWord,
+                                fullName = mainViewModel.signUpState.fullName
+                            )
+                    navController.navigate(route = ScreenRoute.InsertData.route)
                 } else {
                     println("YOU DO NOT HAVE VALID DETAILS YET!") //TODO - Create other indicator of error
                 }
@@ -156,9 +155,20 @@ fun mainMenu(
                 text = stringResource(id = R.string.to_registration),
                 modifier = Modifier.clickable {
                     navController.navigate(route = ScreenRoute.Registration.route)
+                    mainViewModel.betweenMainScreens()
                 }
             )
-
+            //The Text Component below is needed for further testing later
+            /*
+            Text(
+                text = "Delete one profile",
+                modifier = Modifier.clickable{
+                    dbViewModel.deleteOneProfile(
+                        mainViewModel.signUpState.fullName,
+                        mainViewModel.signUpState.passWord
+                    )
+                }
+            )*/
         }
     }
 }

@@ -9,108 +9,111 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myapplication.data.Profile
 import com.example.myapplication.domain.repository.ProfileRepository
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.count
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.withIndex
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class DatabaseViewModel : ViewModel() {
     //DB LOGIC
     private val profileRepository: ProfileRepository = SetupDatabase.repository
-
-
+    
     private suspend fun addProfile(thisProfile: Profile) {
         profileRepository.addProfile(thisProfile)
     }
 
+
     fun registerProfile(thisName: String, thisPassword: String) {
         viewModelScope.launch {
-            addProfile(
-                Profile(
-                    name = thisName,
-                    password = thisPassword,
-                    isLoggedIn = false,
-                    profileBMI = 0,
-                    profileMaxPulse = 0,
-                    profileHRR = 0,
+                addProfile(
+                    Profile(
+                        name = thisName,
+                        password = thisPassword,
+                        isLoggedIn = false,
+                        profileBMI = 0,
+                        profileMaxPulse = 0,
+                        profileHRR = 0,
+                    )
                 )
-            )
         }
         profileState = profileState.copy(
             name = thisName,
             password = thisPassword,
             loggedIn = true,
-            loginColor = Color.Cyan
+            bmi = 0,
+            maxP = 0,
+            hrr = 0,
         )
     }
 
-    fun checkBeforeRegister(password: String): Boolean{
-        var validPassword: Boolean = false
-        var onlyOnePassword: Boolean = false
-        viewModelScope.launch{
-            if(profileRepository.scanForPassword(password)){
-                onlyOnePassword = true
+    fun checkBeforeRegister(password: String){
+       viewModelScope.launch { val countOfProfile = profileRepository.scanForPassword(password) == 0
+           if(countOfProfile){
+               println("No Pre-existing Profile")
+           }
+           else{
+               println("TAKEN PASSWORD OR NAME. MINIMUM ONE MUST CHANGE")
+           } }//Uses scanForPassword-function to check if the password is taken
 
-            }
-            else{
 
-            }
+    }
+
+    fun loggingIn(thisProfile: Profile?){
+        if(thisProfile!= null){
+            profileState = profileState.copy(
+                name = thisProfile.name,
+                password = thisProfile.password,
+                bmi = thisProfile.profileBMI,
+                maxP = thisProfile.profileMaxPulse,
+                hrr = thisProfile.profileHRR,
+                loggedIn = true
+            )
         }
-       if(!onlyOnePassword){
-           profileState = profileState.copy(
-               errorMessage = "You have to find another password"
-           )
-       }
-        return onlyOnePassword
+    }
+
+    //Unneccesary function
+    suspend fun checkValidPass(fullname: String, passCode: String): Profile?{
+        val deferredProfile = viewModelScope.async{
+            profileRepository.getByPasswordAndName(passcode = passCode, nameOne = fullname)
+        }
+        return deferredProfile.await()
     }
 
 
-    fun logInByPassword(password: String, fullName: String) : Boolean  { //This function is called when the user hits Login. It checks if the password is available in one and only one account, and then returns the right profile, then accesses that profiles values
-        var loginValid: Boolean = false
-     //   var loginMessage: String = ""
-        var onlyBMI: Int = 0
-        var onlyMax: Int = 0
-        var onlyHRR: Int = 0
+    fun logInByPassword(password: String, fullName: String)  { //This function is called when the user hits Login. It checks if the password is available in one and only one account, and then returns the right profile, then accesses that profiles values
+     //   TODO - This function now works for finding a profile, I think. All that´s left is to gain access to it´s data
+
+
         viewModelScope.launch {
-            if (checkValidPass(passcode = password)) {
+
                 //If there´s only one profile with this password then log in that profile
                 val onlyProfile = profileRepository.getByPasswordAndName(password, fullName)
 
-                onlyBMI = onlyProfile.profileBMI
-                onlyMax = onlyProfile.profileMaxPulse
-                onlyHRR = onlyProfile.profileHRR
-
-                profileState = profileState.copy(
-                    bmi = onlyBMI,
-                    maxP = onlyMax,
-                    hrr = onlyHRR
-
-                )
-
-            }
-          /*  else {
-                loginMessage = "You have to find another password"
-            }*/
+                if (onlyProfile != null) {
+                    profileState = profileState.copy(
+                        bmi = onlyProfile.profileBMI,
+                        maxP = onlyProfile.profileMaxPulse,
+                        hrr = onlyProfile.profileHRR,
+                    )
+                }
         }
-        profileState = profileState.copy(
-            name = fullName,
-            password = password,
-            loggedIn = true,
-           // errorMessage = loginMessage
-        )
-        return loginValid
+
+
+            profileState = profileState.copy(
+                name = fullName,
+                password = password,
+                loggedIn = true,
+            )
     }
 
-    private fun checkValidPass(passcode: String): Boolean {
-        var result: Boolean = false
-        viewModelScope.launch {
-            if (
-                profileRepository.scanForPassword(passCode = passcode)
-            ) {
-                result = true
-            }
-        }
-        return result
-    }
+
+
+
 
 
     fun loggingOut() {
@@ -120,6 +123,31 @@ class DatabaseViewModel : ViewModel() {
             loggedIn = false,
             loginColor = Color.DarkGray
         )
+    }
+
+    fun testScanOne(passcode:String){
+        viewModelScope.launch{
+            testingScanForPassword(passcode)
+        }
+    }
+
+//THIS IS ONLY FOR TESTING  SCANFORPASSWORD()
+    private suspend fun testingScanForPassword(password: String){
+        var numb: Int? = 0
+
+             numb = profileRepository.scanForPassword(passCode = "password")
+
+        profileState = profileState.copy(profilesIndex = numb.toString())
+    }
+
+
+    fun deleteOneProfile(name: String, pass: String){ //Didn´t work
+        viewModelScope.launch {
+            val oneProfile: Profile? = profileRepository.getByPasswordAndName(name, pass)
+            if(oneProfile != null){
+                profileRepository.deleteProfile(oneProfile)
+            }
+        }
     }
 
 
@@ -164,7 +192,8 @@ class DatabaseViewModel : ViewModel() {
         var loggedIn: Boolean = false,
         var loginColor: Color = Color.DarkGray,
         //extra for correction
-        var errorMessage: String = ""
+        var errorMessage: String = "",
+        var profilesIndex: String = "Number of profiles with that password"
     )
 
 }

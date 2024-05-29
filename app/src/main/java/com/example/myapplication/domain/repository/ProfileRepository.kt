@@ -20,22 +20,27 @@ class ProfileRepository( private val profileDao: ProfileDao ) {
      }
 
     //For logging in
-    suspend fun scanForPassword(passCode: String): Boolean{
-        val list = profileDao.isPasswordAvailable(passCode)
-        if(list.count() >= 1){
-            return true
+    suspend fun scanForPassword(passCode: String): Int?{
+            val list = profileDao.doesPasswordExist(passCode)
+            return list.count()
+    }
+
+
+      suspend fun getByPasswordAndName(passcode: String, nameOne: String): Profile?{
+        val profilesList = profileDao.getByPasswordAndName(passcode, nameOne)
+        if(profilesList.count() > 1){
+            val firstProfile = profilesList.first()
+            return firstProfile[0]
         }
         else{
-            return false
+            return null
         }
     }
 
 
-    suspend fun getByPasswordAndName(passcode: String, fullname: String): Profile{
-        val firstProfile = profileDao.getByPasswordAndName(passcode, fullname).first()
-        return firstProfile[0]
+    fun getAllProfiles(): Flow<List<Profile>> {
+        return profileDao.getAllProfiles()
     }
-
 
 
     //For updating Profile values

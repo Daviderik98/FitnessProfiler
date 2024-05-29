@@ -66,7 +66,7 @@ fun insertDataScreen(
                    dbViewModel = dbViewModel
                )
                    Text(
-                       text = stringResource(R.string.insert_welcome),
+                       text = "Welcome ${dbViewModel.profileState.name}",
                        color = MaterialTheme.colorScheme.secondary,
                        fontSize = 20.sp,
                        fontWeight = FontWeight.Medium,
@@ -76,6 +76,7 @@ fun insertDataScreen(
                    Text(
                        text = stringResource(R.string.insert_description),
                        fontWeight = FontWeight.Medium,
+                       textAlign = TextAlign.Center,
                        modifier = Modifier
                            .fillMaxWidth(0.7f)
                            .align(Alignment.CenterHorizontally),

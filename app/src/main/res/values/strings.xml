@@ -31,10 +31,8 @@
     <string name="insert_label_three">years</string>
     <string name="insert_label_four">bpm</string>
 
-    <string name="present_opening">Presentation Screen</string>
-    <string name="present_welcome">Welcome to the Presentation Screen
-        \n Here you can see the results of your fitness profile
-        \nbased on the data you entered</string>
+    <string name="present_opening">Presentation\nScreen</string>
+    <string name="present_description">In this screen you can calculate the statistics of your fitness level based on the data you previously entered</string>
     <string name="present_allinputs">Entered Data : </string>
     <string name="present_navigate">Navigate Left</string>
 

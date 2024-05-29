@@ -53,6 +53,17 @@ class MainMenuViewModel : ViewModel() {
         signUpState = signUpState.copy(passWordError = passwordResult.errorMessage)
         return passwordResult.isSuccessful
     }
+
+    fun betweenMainScreens(){
+        signUpState = signUpState.copy(
+            fullName = "",
+            passWord = "",
+            fullNameError = "",
+            passWordError = "",
+            isValid = false
+        )
+    }
+
 }
 
 

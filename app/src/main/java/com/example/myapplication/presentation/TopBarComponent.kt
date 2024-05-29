@@ -1,14 +1,20 @@
 package com.example.myapplication.presentation
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -33,35 +39,27 @@ fun topBarComponent(
     navController: NavController,
     dbViewModel: DatabaseViewModel
 ) {
-    Row(modifier = Modifier.fillMaxWidth()) {
-        Image(
-            painter = painterResource(id = R.drawable.ic_launcher_foreground),
-            contentDescription = null,
-            modifier = Modifier.clickable {
-                navController.popBackStack()
-            }
+    Row(modifier = Modifier.fillMaxWidth(),
 
-        )
-        Spacer(Modifier.padding(vertical = 20.dp))
+        ) {
+       Image(
+           painter = painterResource(R.drawable.ic_launcher_foreground),
+           contentDescription = null,
+           modifier = Modifier
+               .padding(vertical = 10.dp, horizontal = 12.dp)
+               .clickable {
+                   dbViewModel.loggingOut()
+                   navController.navigate(route = ScreenRoute.MainMenu.route)
+               }
+       )
         Text(
             text = topBarTitle,
             fontSize = 30.sp,
             fontWeight = FontWeight.Bold,
-            fontStyle = FontStyle.Italic
+            fontStyle = FontStyle.Italic,
+            modifier = Modifier.padding(vertical = 10.dp)
         )
-        Text(
-            text = "Sign out\n${dbViewModel.profileState.name}",
-            color = Color.LightGray,
-            textDecoration = TextDecoration.Underline,
-            modifier = Modifier
-                .padding(vertical = 10.dp, horizontal = 12.dp)
-                .clickable {
-                    println(dbViewModel.profileState.password)
-                    println(dbViewModel.profileState.loggedIn)
-                dbViewModel.loggingOut()
-                navController.navigate(route = ScreenRoute.MainMenu.route)
-            }
-        )
+
     }
 
 
