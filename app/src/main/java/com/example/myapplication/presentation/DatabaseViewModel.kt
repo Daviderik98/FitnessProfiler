@@ -63,18 +63,6 @@ class DatabaseViewModel : ViewModel() {
 
     }
 
-    fun loggingIn(thisProfile: Profile?){
-        if(thisProfile!= null){
-            profileState = profileState.copy(
-                name = thisProfile.name,
-                password = thisProfile.password,
-                bmi = thisProfile.profileBMI,
-                maxP = thisProfile.profileMaxPulse,
-                hrr = thisProfile.profileHRR,
-                loggedIn = true
-            )
-        }
-    }
 
     //Unneccesary function
     suspend fun checkValidPass(fullname: String, passCode: String): Profile?{
